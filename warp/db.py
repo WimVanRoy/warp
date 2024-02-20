@@ -10,14 +10,14 @@ from flask import current_app
 
 DB = None
 
-Blobs = Table('blobs', ('id', 'mimetype', 'data', 'etag'), primary_key='id')
-Users = Table('users', ('login', 'password', 'name', 'account_type'))
-Groups = Table('groups', ('group', 'login'))
-Seat = Table('seat', ('id', 'zid', 'name', 'x', 'y', 'enabled'))
-Zone = Table('zone', ('id', 'zone_group', 'name', 'iid'))
-ZoneAssign = Table('zone_assign', ('zid', 'login', 'zone_role'))
-Book = Table('book', ('id', 'login', 'sid', 'fromts', 'tots'))
-SeatAssign = Table('seat_assign', ('sid', 'login'))
+Blobs = Table('blobs',('id','mimetype','data','etag'),primary_key='id')
+Users = Table('users',('login','password','name','account_type'))
+Groups = Table('groups',('group','login'))
+Seat = Table('seat',('id','zid','name','x','y','enabled', 'seat_group'))
+Zone = Table('zone',('id','zone_group','name','iid'))
+ZoneAssign = Table('zone_assign',('zid','login','zone_role'))
+Book = Table('book',('id','login','sid','fromts','tots'))
+SeatAssign = Table('seat_assign',('sid','login'))
 
 UserToZoneRoles = Table('user_to_zone_roles', ('login', 'zid', 'zone_role'))
 
