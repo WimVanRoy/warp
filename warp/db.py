@@ -10,16 +10,16 @@ from flask import current_app
 
 DB = None
 
-Blobs = Table('blobs',('id','mimetype','data','etag'),primary_key='id')
-Users = Table('users',('login','password','name','account_type'))
-Groups = Table('groups',('group','login'))
-Seat = Table('seat',('id','zid','name','x','y','enabled'))
-Zone = Table('zone',('id','zone_group','name','iid'))
-ZoneAssign = Table('zone_assign',('zid','login','zone_role'))
-Book = Table('book',('id','login','sid','fromts','tots'))
-SeatAssign = Table('seat_assign',('sid','login'))
+Blobs = Table('blobs', ('id', 'mimetype', 'data', 'etag'), primary_key='id')
+Users = Table('users', ('login', 'password', 'name', 'account_type'))
+Groups = Table('groups', ('group', 'login'))
+Seat = Table('seat', ('id', 'zid', 'name', 'x', 'y', 'enabled'))
+Zone = Table('zone', ('id', 'zone_group', 'name', 'iid'))
+ZoneAssign = Table('zone_assign', ('zid', 'login', 'zone_role'))
+Book = Table('book', ('id', 'login', 'sid', 'fromts', 'tots'))
+SeatAssign = Table('seat_assign', ('sid', 'login'))
 
-UserToZoneRoles = Table('user_to_zone_roles',('login','zid','zone_role'))
+UserToZoneRoles = Table('user_to_zone_roles', ('login', 'zid', 'zone_role'))
 
 COUNT_STAR = fn.COUNT(SQL('*'))
 SQL_ONE = SQL('1')
@@ -35,27 +35,31 @@ ZONE_ROLE_ADMIN = 10
 ZONE_ROLE_USER = 20
 ZONE_ROLE_VIEWER = 30
 
-__all__ = ["DB", "Blobs", "Users", "Groups","Seat", "Zone", "ZoneAssign", "Book","SeatAssign","UserToZoneRoles",
+__all__ = ["DB", "Blobs", "Users", "Groups", "Seat", "Zone", "ZoneAssign", "Book", "SeatAssign", "UserToZoneRoles",
            "IntegrityError", "COUNT_STAR", "SQL_ONE",
-           'ACCOUNT_TYPE_ADMIN','ACCOUNT_TYPE_USER','ACCOUNT_TYPE_BLOCKED','ACCOUNT_TYPE_GROUP',
+           'ACCOUNT_TYPE_ADMIN', 'ACCOUNT_TYPE_USER', 'ACCOUNT_TYPE_BLOCKED', 'ACCOUNT_TYPE_GROUP',
            'ZONE_ROLE_ADMIN', 'ZONE_ROLE_USER', 'ZONE_ROLE_VIEWER']
 
 _INITIALIZED_TABLE = 'db_initialized'
 
+
 def _connect():
     DB.connect()
 
+
 def _disconnect(ctx):
     DB.close()
+
 
 def init(app):
 
     global DB
 
     connStr = app.config['DATABASE']
-    connArgs = app.config['DATABASE_ARGS'] if 'DATABASE_ARGS' in app.config else {}
+    connArgs = app.config.get('DATABASE_ARGS', {})
 
-    DB = playhouse.db_url.connect(connStr, autoconnect=False, thread_safe=True, **connArgs)
+    DB = playhouse.db_url.connect(
+        connStr, autoconnect=False, thread_safe=True, **connArgs)
 
     Blobs.bind(DB)
     Users.bind(DB)
@@ -72,7 +76,8 @@ def init(app):
 
     if 'DATABASE_INIT_SCRIPT' in app.config:
 
-        commandParams = {"help": "Create and initialize database.", 'callback': with_appcontext(partial(initDB,True)) }
+        commandParams = {"help": "Create and initialize database.",
+                         'callback': with_appcontext(partial(initDB, True))}
         cmd = click.Command('init-db', **commandParams)
         app.cli.add_command(cmd)
 
@@ -80,7 +85,8 @@ def init(app):
         with app.app_context():
             initDB()
 
-def initDB(force = False):
+
+def initDB(force=False):
 
     initScripts = current_app.config.get('DATABASE_INIT_SCRIPT')
 
@@ -88,8 +94,8 @@ def initDB(force = False):
         print("DATABASE_INIT_SCRIPT not defined ")
         return
 
-    if isinstance(initScripts,str):
-        initScripts = [ initScripts ]
+    if isinstance(initScripts, str):
+        initScripts = [initScripts]
 
     retries = current_app.config['DATABASE_INIT_RETRIES']
     retDelay = current_app.config['DATABASE_INIT_RETRIES_DELAY']
@@ -122,18 +128,20 @@ def initDB(force = False):
                         DB.execute(SQL(sql))
 
                 # in case it is cleaned up in the above scripts (or force == True)
-                DB.execute_sql(f"CREATE TABLE IF NOT EXISTS {_INITIALIZED_TABLE}();")
+                DB.execute_sql(
+                    f"CREATE TABLE IF NOT EXISTS {_INITIALIZED_TABLE}();")
 
             print('The database initialized.')
             break
 
         except OperationalError:
-
             retries -= 1
             if retries == 0:
-                print(f"ERROR: Cannot connect to the database.", file=sys.stderr, flush=True)
+                print(f"ERROR: Cannot connect to the database.",
+                      file=sys.stderr, flush=True)
                 raise
 
-            print(f"Database connection error, waiting {retDelay} second(s).", file=sys.stderr, flush=True)
+            print(
+                f"Database connection error, waiting {retDelay} second(s).", file=sys.stderr, flush=True)
             sleep(retDelay)
             print(f'Retrying ({retries}).', file=sys.stderr, flush=True)
