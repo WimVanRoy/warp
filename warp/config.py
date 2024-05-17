@@ -61,7 +61,7 @@ class DefaultSettings(object):
 
 class DevelopmentSettings(DefaultSettings):
 
-    DATABASE = "postgresql://postgres:postgres_password@127.0.0.1:5432/postgres"
+    DATABASE = "postgresql://warp:warp@localhost:5432/warp"
 
     #DATABASE = "sqlite:///warp/db.sqlite"
     #DATABASE_ARGS = {"pragmas": {"foreign_keys": "ON"}}

@@ -29,7 +29,7 @@ class PerfMeasure:
             last = val[0]
 
 
-DATABASE = "postgresql://warp@localhost:5432/warp"
+DATABASE = "postgresql://warp:warp@localhost:5432/warp"
 DATABASE_ARGS = {}
 DATABASE = "sqlite:///../warp/db.sqlite"
 DATABASE_ARGS = {"pragmas": {"foreign_keys": "ON"}}

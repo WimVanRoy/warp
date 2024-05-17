@@ -21,7 +21,7 @@ MAX_GAPE = 4    # in slots
 GAPE_ARR = [0]*GAPE_0_PROB + list(range(1,MAX_GAPE+1))
 DAY_LEN = (24*3600 / SLOT)
 
-DATABASE = "postgresql://warp@localhost:5432/warp"
+DATABASE = "postgresql://warp:warp@localhost:5432/warp"
 DATABASE_ARGS = {}
 #DATABASE = "sqlite:///../warp/db.sqlite"
 #DATABASE_ARGS = {"pragmas": {"foreign_keys": "ON"}}
