@@ -12,7 +12,7 @@ class DefaultSettings(object):
 
     # for how many weeks in advance users can book a seat
     # (after the current week)
-    WEEKS_IN_ADVANCE = 1
+    WEEKS_IN_ADVANCE = 2
 
     # opening and closing time in seconds from 00:00
     BOOK_OPEN = 6 * 3600
