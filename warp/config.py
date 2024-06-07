@@ -68,6 +68,13 @@ class DefaultSettings(object):
     # MELLON_ENDPOINT
     # MELLON_DEFAULT_GROUP
 
+    # Date/Time defaults
+    PRESELECTED_DATES_STRATEGY = "tomorrow"
+    RESTORE_SELECTED_DATES = True
+    PRESELECTED_TIMES_STRATEGY = "predefined_timespan"
+    PRESELECTED_TIMES_START = 9
+    PRESELECTED_TIMES_END = 17
+
 class DevelopmentSettings(DefaultSettings):
 
     DATABASE = "postgresql://warp:warp@localhost:5432/warp"
