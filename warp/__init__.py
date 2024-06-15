@@ -2,7 +2,7 @@ import flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 from warp.config import *
 
-def create_app():
+def create_app(scope=None):
 
     app = flask.Flask(__name__)
 
