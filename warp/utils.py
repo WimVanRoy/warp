@@ -17,6 +17,20 @@ def today():
     n = now()
     return n - n % (24*3600)
 
+def assignFreeDay():
+    """Get ts before which a booking can occur even on assigned desks."""
+    return today() + 24*3600*flask.current_app.config['DAYS_FREE_ASSIGN']
+
+
+def isDatesAssignFree(dates):
+    """Check if all dates are assign free."""
+    assignFreeTS = assignFreeDay()
+    for b in dates:
+        if b['toTS'] >= assignFreeTS:
+            return False
+
+    return True
+
 # format { "fromTS": 123, "toTS": 123 }
 def getTimeRange(extended = False):
     """ Returns a dict with fromTS and toTS """

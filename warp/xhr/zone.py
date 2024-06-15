@@ -320,12 +320,14 @@ def apply():
         if not seat['enabled']:
             return {"msg": "Forbidden", "code": 105}, 403
 
-        # check if user is assigned to the seat
-        assignedQ = SeatAssign.select(SQL_ONE).where(SeatAssign.sid == sid)
-        assignedToMeQ = assignedQ.where(SeatAssign.login == login)
+        if not utils.isDatesAssignFree(apply_data['book']['dates']):
+            # check if user is assigned to the seat
+            assignedQ = SeatAssign.select(SQL_ONE).where(SeatAssign.sid == sid)
+            assignedToMeQ = assignedQ.where(SeatAssign.login == login)
 
-        if (assignedQ.scalar() is not None and assignedToMeQ.scalar() is None):
-            return {"msg": "Forbidden", "code": 106}, 403
+            if (assignedQ.scalar() is not None
+                    and assignedToMeQ.scalar() is None):
+                return {"msg": "Forbidden", "code": 106}, 403
 
     # -------------------------------------
     # APPLY CHANGES
