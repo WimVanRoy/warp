@@ -337,8 +337,13 @@ WarpSeat.prototype._updateState = function() {
     }
 
     if (Object.keys(this.assignments).length > 0 && !(this.factory.login in this.assignments)) {
-        this.state = WarpSeat.SeatStates.ASSIGNED;
-        return this.state;
+        // But if the new date is not too late, we may still use it!
+        for (let date of this.factory.selectedDates) {
+            if (date.toTS >= window.warpGlobals.assignFreeTS) {
+                this.state = WarpSeat.SeatStates.ASSIGNED;
+                return this.state;
+            }
+        }
     }
 
     var bookings = this.book;

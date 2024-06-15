@@ -90,12 +90,13 @@ def zone(zid):
     else:
         raise Exception('Undefined role')
 
-
     return flask.render_template('zone.html',
         **zoneRole,
         zid = zid,
         nextWeek=nextWeek,
-        defaultSelectedDates=defaultSelectedDates)
+        defaultSelectedDates=defaultSelectedDates,
+        assignFreeTS=utils.assignFreeDay()
+    )
 
 @bp.route("/zone/image/<zid>")
 def zoneImage(zid):
