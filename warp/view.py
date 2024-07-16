@@ -6,16 +6,19 @@ from . import blob_storage
 
 bp = flask.Blueprint('view', __name__)
 
+def getZoneInfo(login):
+    zoneCursor = Zone.select(Zone.id, Zone.name) \
+                     .join(UserToZoneRoles, on=(Zone.id == UserToZoneRoles.zid)) \
+                     .where(UserToZoneRoles.login == login) \
+                     .order_by(Zone.name)
+    return zoneCursor
+
 @bp.context_processor
 def headerDataInit():
 
     headerDataL = []
 
-    zoneCursor = Zone.select(Zone.id, Zone.name) \
-                     .join(UserToZoneRoles, on=(Zone.id == UserToZoneRoles.zid)) \
-                     .where(UserToZoneRoles.login == flask.g.login) \
-                     .order_by(Zone.name)
-
+    zoneCursor = getZoneInfo(flask.g.login)
     for z in zoneCursor:
         headerDataL.append(
             {"text": z['name'], "endpoint": "view.zone", "view_args": {"zid":str(z['id'])} })

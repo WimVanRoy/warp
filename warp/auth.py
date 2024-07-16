@@ -2,6 +2,7 @@ import flask
 from werkzeug.security import check_password_hash
 from warp.db import *
 from . import utils
+from .view import getZoneInfo
 
 bp = flask.Blueprint('auth', __name__)
 
@@ -40,7 +41,13 @@ def login():
             else:
                 flask.session['login'] = c[0]['login']
                 flask.session['login_time'] = utils.now()
-                return flask.redirect(flask.url_for('view.index'))
+                zoneCursor = getZoneInfo(u)
+                if len(zoneCursor) > 0:
+                    return flask.redirect(flask.url_for(
+                        'view.zone', zid=zoneCursor[0]['id']
+                    ))
+                else:
+                    return flask.redirect(flask.url_for('view.index'))
 
         else:
             flask.flash("Wrong username or password")
