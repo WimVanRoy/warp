@@ -14,7 +14,7 @@ class DefaultSettings(object):
     # (after the current week)
     WEEKS_IN_ADVANCE = 3
     # Number of days when everyone can book assigned desks
-    DAYS_FREE_ASSIGN = 3
+    DAYS_FREE_ASSIGN = 7
 
     # opening and closing time in seconds from 00:00
     BOOK_OPEN = 6 * 3600
