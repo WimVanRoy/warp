@@ -14,7 +14,7 @@ class DefaultSettings(object):
     # (after the current week)
     WEEKS_IN_ADVANCE = 3
     # Number of days when everyone can book assigned desks
-    DAYS_FREE_ASSIGN = 3
+    DAYS_FREE_ASSIGN = 7
 
     # Weekdays to hide for reservation, 0 for monday to 6 for sunday
     # Set to [5,6] to omit weekends
