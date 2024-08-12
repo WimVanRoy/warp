@@ -1,6 +1,16 @@
 "use strict";
 
 /**
+ * Get day of week from a timestamp
+ * @param timestamp
+ * @returns day of week index
+ */
+function toDayOfWeek(value) {
+    const currentDate = new Date(value*1000);
+    return currentDate.getUTCDay();
+}
+
+/**
  * WarpSeat
  * NOTE: book and assignments from seatData is not cloned, it is stored as reference
  * @param {integer} sid
@@ -336,12 +346,44 @@ WarpSeat.prototype._updateState = function() {
         return this.state;
     }
 
-    if (Object.keys(this.assignments).length > 0 && !(this.factory.login in this.assignments)) {
-        // But if the new date is not too late, we may still use it!
-        for (let date of this.factory.selectedDates) {
-            if (date.toTS >= window.warpGlobals.assignFreeTS) {
-                this.state = WarpSeat.SeatStates.ASSIGNED;
-                return this.state;
+    if (Object.keys(this.assignments).length > 0) {
+        var notAllowedDays = [];
+        var allowedDates = [];
+        var allDatesAllowed = false;
+        var allDatesNotAllowed = false;
+        for (let assignInfo of this.assignments) {
+            if (this.factory.login == assignInfo.login) {
+                allowedDates.push(assignInfo.dayofweek);
+                if (assignInfo.dayofweek == 0) {
+                    allDatesAllowed = true;
+                }
+            } else {
+                notAllowedDays.push(assignInfo.dayofweek);
+                if (assignInfo.dayofweek == 0) {
+                    allDatesNotAllowed = true;
+                }
+            }
+        }
+
+
+        if (!allDatesAllowed) {
+            var notAllowedDaysUniq = new Set(
+                notAllowedDays.filter(function( el ) {
+                    return allowedDates.indexOf( el ) < 0;
+            }));
+
+            // But if the new date is not too late, we may still use it!
+            for (let date of this.factory.selectedDates) {
+                // Todo compute weekday
+                if (date.toTS >= window.warpGlobals.assignFreeTS) {
+                    var dayOfWeek = toDayOfWeek(date.toTS);
+                    if (!allowedDates.includes(dayOfWeek) &&
+                        (allDatesNotAllowed || notAllowedDaysUniq.has(dayOfWeek))
+                    ) {
+                        this.state = WarpSeat.SeatStates.ASSIGNED;
+                        return this.state;
+                    }
+                }
             }
         }
     }
@@ -407,7 +449,7 @@ WarpSeat.prototype._updateView = function() {
     if (this.otherZone)
         return;
 
-    var assignedToMe = this.factory.login in this.assignments;
+    var assignedToMe = this.assignments_people.includes(this.factory.login);
 
     switch (this.state) {
 
@@ -486,14 +528,23 @@ WarpSeat.prototype._setData = function(seatData,usersNames) {
     }
     else {
         this.enabled = ('enabled' in seatData)? seatData.enabled: true;
-        this.assignments = {}
+        this.assignments = []
+        this.assignments_people = []
 
         for (let b in this.book) {
             this.book[b].username = usersNames[this.book[b].login];
         }
         if ('assignments' in seatData) {
-            for (let login of seatData.assignments)
-                this.assignments[login] = usersNames[login]
+            for (let data of seatData.assignments) {
+                this.assignments_people.push(data.login);
+                this.assignments.push(
+                    {
+                        login: data.login,
+                        username: usersNames[data.login],
+                        dayofweek: data.dayofweek
+                    }
+                )
+            }
         }
     }
 }
