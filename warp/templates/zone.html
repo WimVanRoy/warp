@@ -18,7 +18,6 @@
         window.warpGlobals.isZoneViewer = true;
         {% endif %}
         window.warpGlobals.assignFreeTS = {{ assignFreeTS }};
-
     </script>
 
 {% endblock %}
@@ -58,13 +57,23 @@
     <div id="assigned_seat_modal" class="modal">
         <div class="modal-content">
             <h4 id="assigned_seat_header"></h4>
-            <p class="TR">Select users to which the seat will be assigned:</p>
-            <div class="chips chips-autocomplete" id="assigned_seat_chips"></div>
-          </div>
-          <div class="modal-footer">
+            <p class="TR">Select users to which the seat will be assigned (everyday):</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_0"></div>
+            <p class="TR">Monday:</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_1"></div>
+            <p class="TR">Tuesday:</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_2"></div>
+            <p class="TR">Wednesday:</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_3"></div>
+            <p class="TR">Thursday:</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_4"></div>
+            <p class="TR">Friday:</p>
+            <div class="chips chips-autocomplete" id="assigned_seat_chips_5"></div>
+        </div>
+        <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-light btn zone_action_btn TR" data-action="assign">btn.Set</a>
             <a href="#!" class="modal-close waves-effect waves-light btn-flat TR">btn.Cancel</a>
-          </div>
+        </div>
     </div>
     {% endif %}
 

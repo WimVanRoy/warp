@@ -127,3 +127,7 @@ def validateJSONInput(jsonSchema, isAdmin = False):
         return wrapper
 
     return inner
+
+def getDayOfWeek(ts):
+    """Get day of week."""
+    return gmtime(ts).tm_wday

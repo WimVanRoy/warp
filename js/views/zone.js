@@ -75,6 +75,7 @@ function initSlider() {
     return slider;
 }
 
+
 function initSeats() {
 
     var seatFactory = new WarpSeatFactory(
@@ -186,6 +187,11 @@ function handleSmallPreviews(seatFactory, zoneMap) {
     }
 }
 
+function toDayOfWeekText(dayofweek) {
+    var dayOfWeekText = ["", " (Monday)", " (Tuesday)", " (Wednesday)", " (Thursday)", " (Friday)"];
+    return dayOfWeekText[dayofweek];
+}
+
 function initSeatPreview(seatFactory, previewCheckbox, zoneMap) {
     let currentPreview = null;
 
@@ -238,7 +244,8 @@ function initSeatPreview(seatFactory, previewCheckbox, zoneMap) {
             var table =  previewDiv.appendChild(document.createElement("table"));
             for (let a of assignments) {
                 var tr = table.appendChild( document.createElement("tr"));
-                tr.appendChild( document.createElement("td")).appendChild( document.createTextNode(a));
+                var weekTxt = toDayOfWeekText(a.dayofweek);
+                tr.appendChild( document.createElement("td")).appendChild( document.createTextNode(a.username + weekTxt));
             }
         }
 
@@ -300,21 +307,7 @@ function initSeatPreview(seatFactory, previewCheckbox, zoneMap) {
 
 }
 
-function initAssignedSeatsModal(seat) {
-
-    var assignModalEl = document.getElementById("assigned_seat_modal");
-    if (!assignModalEl || typeof(ZoneUserData) === 'undefined')
-        return null;
-
-    var assignModal = M.Modal.getInstance(assignModalEl);
-    if (!assignModal) {
-        assignModal = M.Modal.init(assignModalEl, {});
-    }
-
-    var zoneUserData = ZoneUserData.getInstance();
-
-    var chipsEl = document.getElementById('assigned_seat_chips');
-
+function chipAutoComplete(chipsEl, zoneUserData) {
     var chipsOptions;
     var chips = M.Chips.getInstance(chipsEl);
     if (chips) {
@@ -352,11 +345,30 @@ function initAssignedSeatsModal(seat) {
         };
     }
 
-    chips = M.Chips.init(chipsEl, chipsOptions);
+    return M.Chips.init(chipsEl, chipsOptions);
+}
+
+function initAssignedSeatsModal(seat) {
+
+    var assignModalEl = document.getElementById("assigned_seat_modal");
+    if (!assignModalEl || typeof(ZoneUserData) === 'undefined')
+        return null;
+
+    var assignModal = M.Modal.getInstance(assignModalEl);
+    if (!assignModal) {
+        assignModal = M.Modal.init(assignModalEl, {});
+    }
+
+    var zoneUserData = ZoneUserData.getInstance();
+    var chips = []
+    for (let step = 0; step < 6; step++) {
+        var chipsEl = document.getElementById('assigned_seat_chips_' + step.toString());
+        chips.push(chipAutoComplete(chipsEl, zoneUserData));
+    }
 
     var assignments = seat.getAssignments();
-    for (let login in assignments) {
-        chips.addChip({tag: ZoneUserData.makeUserStr(login,assignments[login])})
+    for (let data of assignments) {
+        chips[data.dayofweek].addChip({tag: ZoneUserData.makeUserStr(data.login,data.username)});
     }
 
     return assignModal;
@@ -483,7 +495,7 @@ function initActionMenu(seatFactory, previewCheckbox, zoneMap) {
         // real action button is inside modal
         if (this.dataset.action == 'assign-modal') {
             var assignModal = initAssignedSeatsModal(seat);
-            document.getElementById('assigned_seat_chips').focus();
+            document.getElementById('assigned_seat_chips_0').focus();
             assignModal.open();
             return;
         }
@@ -491,13 +503,17 @@ function initActionMenu(seatFactory, previewCheckbox, zoneMap) {
         var applyData = {};
 
         if (this.dataset.action == "assign" && typeof(ZoneUserData) !== 'undefined') {
-
-            var chipsEl = document.getElementById('assigned_seat_chips');
-            var chips = M.Chips.getInstance(chipsEl);
-
             var logins = [];
-            for (var c of chips.getData()) {
-                logins.push(ZoneUserData.makeUserStrRev(c.tag));
+
+            for (let step = 0; step < 6; step++) {
+                var chipsEl = document.getElementById('assigned_seat_chips_' + step.toString());
+                var chips = M.Chips.getInstance(chipsEl);
+                for (var c of chips.getData()) {
+                    logins.push({
+                        "login": ZoneUserData.makeUserStrRev(c.tag),
+                        "dayofweek": step
+                    });
+                }
             }
 
             applyData['assign'] = {

@@ -1,3 +1,4 @@
+# flake8: noqa
 from collections import defaultdict
 import flask
 from jsonschema import validate, ValidationError
@@ -70,14 +71,17 @@ def getSeats(zid):
 
     if flask.request.args.get('onlyOtherZone') not in {'1','True','true'}:
 
-        assignCursor = SeatAssign.select(SeatAssign.sid, Users.login) \
+        assignCursor = SeatAssign.select(SeatAssign.sid, Users.login, SeatAssign.dayofweek) \
                                 .join(Users,on=(SeatAssign.login == Users.login)) \
                                 .join(Seat, on=(SeatAssign.sid == Seat.id)) \
                                 .where(Seat.zid == zid)
 
-        assignments = defaultdict(set)
+        assignments = defaultdict(list)
         for r in assignCursor:
-            assignments[r['sid']].add(r['login'])
+            try:
+                assignments[r['sid']].append({"login": r['login'], "dayofweek": r['dayofweek']})
+            except Exception as e:
+                raise Exception(r['sid'])
             usedUsers.add(r['login'])
 
         seatsCursor = Seat.select(Seat.id, Seat.name, Seat.x, Seat.y, Seat.zid, Seat.enabled, Seat.seat_group) \
@@ -196,7 +200,12 @@ applySchema = {
                 "logins": {
                     "type": "array",
                     "items": {
-                        "type": "string",
+                        "type": "object",
+                        "properties": {
+                            "login": {"type" : "string"},
+                            "dayofweek": {"type" : "integer"}
+                        },
+                        "required": [ "login", "dayofweek"]
                     },
                 },
             },
@@ -322,9 +331,15 @@ def apply():
 
         if not utils.isDatesAssignFree(apply_data['book']['dates']):
             # check if user is assigned to the seat
-            assignedQ = SeatAssign.select(SQL_ONE).where(SeatAssign.sid == sid)
-            assignedToMeQ = assignedQ.where(SeatAssign.login == login)
+            day_of_week = list(set(
+                [utils.getDayOfWeek(date['toTS']) for date in apply_data['book']['dates']]
+            ))
+            day_of_week.append(0)
 
+            assignedQ = SeatAssign.select(SQL_ONE).where(SeatAssign.sid == sid)
+            assignedToMeQ = assignedQ.where(
+                SeatAssign.login == login
+            ).where(SeatAssign.dayofweek.in_(day_of_week))
             if (assignedQ.scalar() is not None
                     and assignedToMeQ.scalar() is None):
                 return {"msg": "Forbidden", "code": 106}, 403
@@ -353,14 +368,14 @@ def apply():
                 SeatAssign.delete().where(SeatAssign.sid == apply_data['assign']['sid']).execute()
 
                 if len(apply_data['assign']['logins']):
-
                     insertData = [{
                         SeatAssign.sid: apply_data['assign']['sid'],
-                        SeatAssign.login: l
-                        } for l in apply_data['assign']['logins']]
+                        SeatAssign.login: l['login'],
+                        SeatAssign.dayofweek: l['dayofweek']
+                        } for l in apply_data['assign']['logins']
+                    ]
 
                     rowCount = SeatAssign.insert(insertData).as_rowcount().execute()
-
                     if rowCount != len(apply_data['assign']['logins']):
                         raise ApplyError("Number of affected row is different then in assign.logins.", 107)
 
@@ -429,7 +444,9 @@ def apply():
                     .join(Users, on=(Book.login == Users.login)) \
                     .where((Book.fromts < ts['toTS']) & (Book.tots > ts['fromTS'])) \
                     .where(Book.sid == apply_data['assign']['sid']) \
-                    .where(Users.login.not_in(apply_data['assign']['logins']))
+                    .where(Users.login.not_in(
+                        [item['login'] for item in apply_data['assign']['logins']]
+                    ))
 
         conflicts_in_assign = [
             {"sid": row['sid'],
