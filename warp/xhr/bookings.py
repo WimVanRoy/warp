@@ -50,10 +50,6 @@ listSchema = addToTabulatorSchema({
 @bp.route("list", endpoint='list', methods=["POST"])
 @utils.validateJSONInput(listSchema)
 def listW(report = False):      # list is a built-in type
-
-    if not flask.g.isAdmin and report:
-        flask.abort(403)
-
     requestData = flask.request.get_json()
 
     if not report and 'export' in requestData:
