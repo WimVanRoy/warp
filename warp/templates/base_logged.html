@@ -23,8 +23,11 @@
         {% for i in headerDataL %}
         <li {{ 'class="active"'|safe if i['active'] }}><a href="{{i['url']}}" class="TR">{{i['text']}}</a></li>
         {% endfor %}
-        {% if g.isAdmin %}
         <li class="divider"></li>
+        {% for i in headerDataRAll %}
+        <li {{ 'class="active"'|safe if i['active'] }}><a href="{{i['url']}}" class="TR">{{i['text']}}</a></li>
+        {% endfor %}
+        {% if g.isAdmin %}
         {% for i in headerDataR %}
         <li {{ 'class="active"'|safe if i['active'] }}><a href="{{i['url']}}" class="TR">{{i['text']}}</a></li>
         {% endfor %}
@@ -53,13 +56,16 @@
             <div class='right'>
                 <a href="{{ url_for('view.index')}}" class="right"><img class="logo" src="{{ url_for('static', filename='images/logo.png') }}"></a>
             </div>
-            {% if g.isAdmin %}
             <ul class="right hide-on-med-and-down">
+                {% for i in headerDataRAll %}
+                <li {{ 'class="active"'|safe if i['active'] }}><a href="{{i['url']}}" class="TR">{{i['text']}}</a></li>
+                {% endfor %}
+                {% if g.isAdmin %}
                 {% for i in headerDataR %}
                 <li {{ 'class="active"'|safe if i['active'] }}><a href="{{i['url']}}" class="TR">{{i['text']}}</a></li>
                 {% endfor %}
+                {% endif %}
             </ul>
-            {% endif %}
 
             <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="left hide-on-med-and-down">

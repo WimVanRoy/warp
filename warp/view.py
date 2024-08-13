@@ -29,15 +29,17 @@ def headerDataInit():
     if headerDataL:
         headerDataL.insert(0,{"text": "Bookings", "endpoint": "view.bookings", "view_args": {"report":""} })
 
-    headerDataR = [
+    headerDataRAll = [
         {"text": "Report", "endpoint": "view.bookings", "view_args": {"report": "report"} },
+    ]
+    headerDataR = [
         {"text": "Users", "endpoint": "view.users", "view_args": {} },
         {"text": "Groups", "endpoint": "view.groups", "view_args": {} },
         {"text": "Zones", "endpoint": "view.zones", "view_args": {} }
     ]
 
     #generate urls and selected
-    for hdata in [headerDataL,headerDataR]:
+    for hdata in [headerDataL,headerDataR,headerDataRAll]:
 
         for h in hdata:
 
@@ -48,6 +50,7 @@ def headerDataInit():
 
 
     return { "headerDataL": headerDataL,
+             "headerDataRAll": headerDataRAll,
              "headerDataR": headerDataR,
              'hasLogout': 'auth.logout' in flask.current_app.view_functions
     }
@@ -59,10 +62,6 @@ def index():
 @bp.route("/bookings/<string:report>")
 @bp.route("/bookings", defaults={"report": "" })
 def bookings(report):
-
-    if report == "report" and not flask.g.isAdmin:
-        flask.abort(403)
-
     return flask.render_template('bookings.html',
         report = (report == "report"),
         maxReportRows = flask.current_app.config['MAX_REPORT_ROWS'])
