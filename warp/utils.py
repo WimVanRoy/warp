@@ -87,7 +87,6 @@ def getNextWeek():
     return res
 
 def formatTimestamp(ts):
-
     t = gmtime(ts)
     return strftime("%Y-%m-%d %H:%M",t)
 
@@ -128,6 +127,7 @@ def validateJSONInput(jsonSchema, isAdmin = False):
 
     return inner
 
+
 def getDayOfWeek(ts):
-    """Get day of week."""
-    return gmtime(ts).tm_wday
+    """Get day of week (monday = 1, sunday = 7)."""
+    return gmtime(ts).tm_wday + 1
