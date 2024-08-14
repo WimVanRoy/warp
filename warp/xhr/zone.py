@@ -336,10 +336,9 @@ def apply():
             ))
             day_of_week.append(0)
 
-            assignedQ = SeatAssign.select(SQL_ONE).where(SeatAssign.sid == sid)
-            assignedToMeQ = assignedQ.where(
-                SeatAssign.login == login
-            ).where(SeatAssign.dayofweek.in_(day_of_week))
+            assignedQ = SeatAssign.select(SQL_ONE).where(
+                SeatAssign.sid == sid).where(SeatAssign.dayofweek.in_(day_of_week))
+            assignedToMeQ = assignedQ.where(SeatAssign.login == login)
             if (assignedQ.scalar() is not None
                     and assignedToMeQ.scalar() is None):
                 return {"msg": "Forbidden", "code": 106}, 403
