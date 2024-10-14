@@ -69,7 +69,7 @@ class DefaultSettings(object):
     # MELLON_DEFAULT_GROUP
 
     # Date/Time defaults
-    PRESELECTED_DATES_STRATEGY = "tomorrow"
+    PRESELECTED_DATES_STRATEGY = "today"
     RESTORE_SELECTED_DATES = True
     PRESELECTED_TIMES_STRATEGY = "predefined_timespan"
     PRESELECTED_TIMES_START = 9
