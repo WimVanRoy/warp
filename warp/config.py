@@ -71,7 +71,7 @@ class DefaultSettings(object):
     # Date/Time defaults
     PRESELECTED_DATES_STRATEGY = "today"
     RESTORE_SELECTED_DATES = True
-    PRESELECTED_TIMES_STRATEGY = "now" # predefined_timespan"
+    PRESELECTED_TIMES_STRATEGY = "predefined_timespan"
     PRESELECTED_TIMES_START = 9
     PRESELECTED_TIMES_END = 17.25
 
