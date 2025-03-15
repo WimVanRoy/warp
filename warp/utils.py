@@ -17,6 +17,12 @@ def today():
     n = now()
     return n - n % (24*3600)
 
+
+def getRelativeDay(nr_days):
+    """Get days in the past."""
+    return today() + nr_days * 24*3600
+
+
 def assignFreeDay():
     """Get ts before which a booking can occur even on assigned desks."""
     return today() + 24*3600*flask.current_app.config['DAYS_FREE_ASSIGN']

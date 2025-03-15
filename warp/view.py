@@ -31,6 +31,7 @@ def headerDataInit():
 
     headerDataRAll = [
         {"text": "Report", "endpoint": "view.bookings", "view_args": {"report": "report"} },
+        {"text": "Stats", "endpoint": "view.statistics", "view_args": {}},
     ]
     headerDataR = [
         {"text": "Users", "endpoint": "view.users", "view_args": {} },
@@ -65,6 +66,10 @@ def bookings(report):
     return flask.render_template('bookings.html',
         report = (report == "report"),
         maxReportRows = flask.current_app.config['MAX_REPORT_ROWS'])
+
+@bp.route("/statistics")
+def statistics():
+    return flask.render_template('statistics.html')
 
 @bp.route("/zone/<zid>")
 def zone(zid):
