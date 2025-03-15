@@ -13,6 +13,7 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "babel-loader": "^8.2.3",
+    "chart.js": "^4.4.8",
     "core-js": "^3.19.1",
     "css-loader": "^6.5.1",
     "cssnano": "^5.0.11",
