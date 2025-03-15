@@ -12,7 +12,7 @@ bp = flask.Blueprint('statistics', __name__, url_prefix='statistics')
 @bp.route("fetch", endpoint='fetch')
 def fetch():
     """Fetch the data of the statistics."""
-    future = utils.getRelativeDay(5) - 1
+    future = utils.getRelativeDay(7) - 1
     past = utils.getRelativeDay(-30) + 1
     query = Book.select(Book.id, Book.fromts, Book.tots) \
         .where(Book.fromts >= past) \
@@ -26,10 +26,15 @@ def fetch():
         if b['fromts'] < time + 24*3600:
             count += 1
         else:
-            data.append({"date": strftime("%Y-%m-%d", gmtime(time)), "count": count})
-            while time + 24*3600 < b['fromts']:
+            data.append(
+                {"date": strftime("%Y-%m-%d", gmtime(time)), "count": count})
+
+            time += 24*3600
+            while b['fromts'] > time + 24*3600:
+                data.append(
+                    {"date": strftime("%Y-%m-%d", gmtime(time)), "count": 0})
                 time += 24*3600
-                data.append({"date": strftime("%Y-%m-%d", gmtime(time)), "count": 0})
+
             count = 1
 
     data.append({"date": strftime("%Y-%m-%d", gmtime(time)), "count": count})
