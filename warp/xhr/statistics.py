@@ -23,19 +23,13 @@ def fetch():
     time = past
     count = 0
     for b in query:
-        if b['fromts'] < time + 24*3600:
-            count += 1
-        else:
+        while b['fromts'] > time + 24*3600:
             data.append(
                 {"date": strftime("%Y-%m-%d", gmtime(time)), "count": count})
-
             time += 24*3600
-            while b['fromts'] > time + 24*3600:
-                data.append(
-                    {"date": strftime("%Y-%m-%d", gmtime(time)), "count": 0})
-                time += 24*3600
+            count = 0
 
-            count = 1
+        count += 1
 
     data.append({"date": strftime("%Y-%m-%d", gmtime(time)), "count": count})
     while time < future:
@@ -43,8 +37,6 @@ def fetch():
         data.append({"date": strftime("%Y-%m-%d", gmtime(time)), "count": 0})
 
     res = {"data": data}
-    print(res)
-
     return flask.current_app.response_class(
         response=orjson.dumps(res),
         status=200,
