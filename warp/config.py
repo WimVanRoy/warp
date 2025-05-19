@@ -97,6 +97,8 @@ class DevelopmentSettings(DefaultSettings):
         "sql/clean_db.sql",
         "sql/schema.sql",
         "sql/sample_data.sql"
+        "sql/update.sql"
+        "sql/update2.sql"
     ]
 
     SECRET_KEY = b'change_me'

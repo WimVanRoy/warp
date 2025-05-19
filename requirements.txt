@@ -7,3 +7,4 @@ orjson
 ldap3
 msal
 pycryptodome
+icalendar

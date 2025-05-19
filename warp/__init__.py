@@ -1,6 +1,7 @@
 import flask
 from werkzeug.middleware.proxy_fix import ProxyFix
-from warp.config import *
+from warp.config import initConfig
+
 
 def create_app(scope=None):
 
@@ -14,6 +15,9 @@ def create_app(scope=None):
     from . import view
     app.register_blueprint(view.bp)
 
+    from . import calendar
+    app.register_blueprint(calendar.bp)
+
     from . import xhr
     app.register_blueprint(xhr.bp, url_prefix='/xhr')
 
@@ -26,10 +30,10 @@ def create_app(scope=None):
        and app.config['AUTH_MELLON']:
         app.register_blueprint(auth_mellon.bp)
     elif 'AUTH_LDAP' in app.config \
-       and app.config['AUTH_LDAP']:
+            and app.config['AUTH_LDAP']:
         app.register_blueprint(auth_ldap.bp)
     elif 'AUTH_AAD' in app.config \
-       and app.config['AUTH_AAD']:
+            and app.config['AUTH_AAD']:
         app.register_blueprint(auth_aad.bp)
     else:
         app.register_blueprint(auth.bp)

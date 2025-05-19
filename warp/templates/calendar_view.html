@@ -1,0 +1,38 @@
+{% extends 'base_logged.html' %}
+
+{% block header %}
+    {{ super() }}
+{% endblock %}
+
+{% block overlays %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+
+    <div class="container">
+        <h1>Calendar link</h1>
+        <p>To get updates from warp in your outlook calendar, you can use the following link:</p>
+        <p>
+            <a href="{{ url_for('calendar.feed', uid=id, key=hash) }}" target="_blank">
+                {{ url_for('calendar.feed', uid=id, key=hash, _external=True) }}
+            </a>
+        </p>
+        <p>
+            To add this link to your Outlook calendar, follow these steps:
+        </p>
+        <ol>
+            <li>Open Outlook and go to the calendar view.</li>
+            <li>Click on "Add Calendar" or "Subscribe from Web".</li>
+            <li>Paste the link provided above into the URL field.</li>
+            <li>Click "Add" or "Subscribe".</li>
+            <li>Your calendar will now be updated with the latest events from warp.</li>
+        </ol>
+        <p>
+            <strong>Note:</strong> This link is unique to you and should not be shared with others.
+        </p>
+
+    </div>
+
+{% endblock %}

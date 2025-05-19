@@ -6,6 +6,7 @@ import flask
 from warp.db import *
 from . import utils
 from . import blob_storage
+from .calendar import get_calender_info
 
 bp = flask.Blueprint('view', __name__)
 
@@ -32,6 +33,7 @@ def headerDataInit():
     headerDataRAll = [
         {"text": "Report", "endpoint": "view.bookings", "view_args": {"report": "report"} },
         {"text": "Stats", "endpoint": "view.statistics", "view_args": {}},
+        {"text": "ICal", "endpoint": "view.calendar", "view_args": {}},
     ]
     headerDataR = [
         {"text": "Users", "endpoint": "view.users", "view_args": {} },
@@ -41,9 +43,7 @@ def headerDataInit():
 
     #generate urls and selected
     for hdata in [headerDataL,headerDataR,headerDataRAll]:
-
         for h in hdata:
-
             h['url'] = flask.url_for(h['endpoint'],**h['view_args'])
             a = flask.request.endpoint == h['endpoint']
             b = flask.request.view_args == h['view_args']
@@ -71,16 +71,25 @@ def bookings(report):
 def statistics():
     return flask.render_template('statistics.html')
 
+
+@bp.route("/calendar/view")
+def calendar():
+    """View and if not there, create calendar feed."""
+    res = get_calender_info()
+    return flask.render_template(
+        "calendar_view.html",
+        hash=res['hash'], id=res['id'], login=res['login'],
+    )
+
 @bp.route("/zone/<zid>")
 def zone(zid):
-
     zoneRole = UserToZoneRoles.select(UserToZoneRoles.zone_role) \
                               .where( (UserToZoneRoles.zid == zid) & (UserToZoneRoles.login == flask.g.login) ) \
                               .scalar()
 
     if zoneRole is None:
         flask.abort(403)
-    
+
     preselected_times_strategy = flask.current_app.config['PRESELECTED_TIMES_STRATEGY']
     match preselected_times_strategy:
         case 'now':

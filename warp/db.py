@@ -10,14 +10,16 @@ from flask import current_app
 
 DB = None
 
-Blobs = Table('blobs',('id','mimetype','data','etag'),primary_key='id')
-Users = Table('users',('login','password','name','account_type'))
-Groups = Table('groups',('group','login'))
-Seat = Table('seat',('id','zid','name','x','y','enabled', 'seat_group'))
-Zone = Table('zone',('id','zone_group','name','iid'))
-ZoneAssign = Table('zone_assign',('zid','login','zone_role'))
-Book = Table('book',('id','login','sid','fromts','tots'))
-SeatAssign = Table('seat_assign',('sid','login',"dayofweek"))
+Blobs = Table('blobs', ('id', 'mimetype', 'data', 'etag'), primary_key='id')
+Users = Table('users', ('login', 'password', 'name', 'account_type'))
+CalenderRef = Table("calender_ref", ('id', 'hash', 'login'),
+                    primary_key='id')
+Groups = Table('groups', ('group', 'login'))
+Seat = Table('seat', ('id', 'zid', 'name', 'x', 'y', 'enabled', 'seat_group'))
+Zone = Table('zone', ('id', 'zone_group', 'name', 'iid'))
+ZoneAssign = Table('zone_assign', ('zid', 'login', 'zone_role'))
+Book = Table('book', ('id', 'login', 'sid', 'fromts', 'tots'))
+SeatAssign = Table('seat_assign', ('sid', 'login', "dayofweek"))
 
 UserToZoneRoles = Table('user_to_zone_roles', ('login', 'zid', 'zone_role'))
 
@@ -35,7 +37,7 @@ ZONE_ROLE_ADMIN = 10
 ZONE_ROLE_USER = 20
 ZONE_ROLE_VIEWER = 30
 
-__all__ = ["DB", "Blobs", "Users", "Groups", "Seat", "Zone", "ZoneAssign", "Book", "SeatAssign", "UserToZoneRoles",
+__all__ = ["DB", "Blobs", "Users", 'CalenderRef', "Groups", "Seat", "Zone", "ZoneAssign", "Book", "SeatAssign", "UserToZoneRoles",
            "IntegrityError", "COUNT_STAR", "SQL_ONE",
            'ACCOUNT_TYPE_ADMIN', 'ACCOUNT_TYPE_USER', 'ACCOUNT_TYPE_BLOCKED', 'ACCOUNT_TYPE_GROUP',
            'ZONE_ROLE_ADMIN', 'ZONE_ROLE_USER', 'ZONE_ROLE_VIEWER']
@@ -63,6 +65,7 @@ def init(app):
 
     Blobs.bind(DB)
     Users.bind(DB)
+    CalenderRef.bind(DB)
     Groups.bind(DB)
     Seat.bind(DB)
     Zone.bind(DB)

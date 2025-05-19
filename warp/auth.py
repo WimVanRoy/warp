@@ -70,8 +70,10 @@ def session():
     if flask.request.endpoint == 'static':
         return
 
-    login = flask.session.get('login')
+    if flask.request.endpoint == 'calendar.feed':
+        return
 
+    login = flask.session.get('login')
     if login is None:
         return flask.redirect(
             flask.url_for('auth.login'))

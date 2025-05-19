@@ -35,6 +35,13 @@ CREATE TABLE zone (
     FOREIGN KEY (iid) REFERENCES blobs(id) ON DELETE SET NULL
     );
 
+CREATE TABLE calender_ref (
+    id SERIAL PRIMARY KEY,
+    hash text NOT NULL,
+    login text NOT NULL,
+    FOREIGN KEY (login) REFERENCES users(login) ON DELETE CASCADE
+);
+
 -- TODO_X zone_role limit
 CREATE TABLE zone_assign (
     zid integer NOT NULL,
