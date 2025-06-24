@@ -99,9 +99,12 @@ def get_calendar_info():
     )
     if res is None:
         hash = generate_random_key(length=64)
-        res = CalenderRef.insert(
+        CalenderRef.insert(
             login=login,
             hash=hash
         ).execute()
+        res = get_first(
+            CalenderRef.select().where(CalenderRef.login == login)
+        )
 
     return res
