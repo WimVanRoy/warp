@@ -71,7 +71,7 @@ def feed(uid, key):
     toTS = timeRange["toTS"]
 
     results = Book.select(
-        Seat.name, Book.fromts, Book.tots,
+        Book.id, Seat.name, Book.fromts, Book.tots,
         peewee.Value(Zone.name).alias("zone_name")
     ).join(
         Users, on=(Book.login == Users.login)
@@ -87,6 +87,9 @@ def feed(uid, key):
     cal = Calendar()
     cal.add("version", "2.0")
     cal.add("calscale", "GREGORIAN")
+    cal.add("prodid", "-//WARP//WARP Calendar//EN")
+    cal.add("method", "PUBLISH")
+    cal.add("X-WR-TIMEZONE", "UTC")
 
     # Set the calendar's timezone
     # timezone = ZoneInfo("Europe/Brussels")
@@ -103,6 +106,8 @@ def feed(uid, key):
         event.add('dtend', datetime.fromtimestamp(res['tots'], tz=timezone))
         event.add('dtstamp', calendar_time)
         event.add("description", "WARP reservation")
+        event['uid'] = f"{res['id']}bookingwarp"
+        event['url'] = "https://194-146-38-110.cloud-xip.com/"
         cal.add_component(event)
 
     ret = flask.make_response(decode_calendar(cal))
