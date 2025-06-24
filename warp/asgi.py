@@ -15,6 +15,9 @@ app.register_blueprint(view.bp)
 from warp import xhr
 app.register_blueprint(xhr.bp, url_prefix='/xhr')
 
+from warp import calendar
+app.register_blueprint(calendar.bp)
+
 from warp import auth
 from warp import auth_mellon
 from warp import auth_ldap
