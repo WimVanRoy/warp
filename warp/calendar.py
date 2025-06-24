@@ -57,7 +57,7 @@ def create_calendar():
     print(decode_calendar(cal))
 
 
-@bp.route("/calendar/feed/<uid>-<key>/feed.ical")
+@bp.route("/calendar/feed/<uid>-<key>/feed.ics")
 def feed(uid, key):
     """Get calendar feed."""
     res = get_first(
@@ -89,7 +89,8 @@ def feed(uid, key):
     cal.add("calscale", "GREGORIAN")
 
     # Set the calendar's timezone
-    timezone = ZoneInfo("Europe/Brussels")
+    # timezone = ZoneInfo("Europe/Brussels")
+    timezone = ZoneInfo("UTC")  # Use UTC for simplicity
     calendar_time = datetime.fromtimestamp(
         timeRange["fromTS"], tz=timezone
     )
