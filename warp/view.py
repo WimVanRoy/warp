@@ -6,7 +6,7 @@ import flask
 from warp.db import *
 from . import utils
 from . import blob_storage
-from .calendar import get_calender_info
+from .calendar import get_calendar_info
 
 bp = flask.Blueprint('view', __name__)
 
@@ -75,7 +75,7 @@ def statistics():
 @bp.route("/calendar/view")
 def calendar():
     """View and if not there, create calendar feed."""
-    res = get_calender_info()
+    res = get_calendar_info()
     return flask.render_template(
         "calendar_view.html",
         hash=res['hash'], id=res['id'], login=res['login'],

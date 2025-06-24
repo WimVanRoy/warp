@@ -109,7 +109,7 @@ def feed(uid, key):
     return ret
 
 
-def get_calender_info():
+def get_calendar_info():
     """View and if not there, create calendar feed."""
     login = flask.g.login  # User login
     res = get_first(
