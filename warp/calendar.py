@@ -32,31 +32,6 @@ def decode_calendar(cal):
     return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
 
 
-def create_calendar():
-    cal = Calendar()
-    cal.add("version", "2.0")
-    cal.add("calscale", "GREGORIAN")
-
-    event = Event()
-    event.add('summary', 'Python meeting about calendaring')
-    event.add('dtstart', datetime(2005, 4, 4, 8, 0,
-              0, tzinfo=ZoneInfo("Europe/Brussels")))
-    event.add('dtend', datetime(2005, 4, 4, 10, 0,
-              0, tzinfo=ZoneInfo("Europe/Brussels")))
-    event.add('dtstamp', datetime(2005, 4, 4, 0, 10,
-              0, tzinfo=ZoneInfo("Europe/Brussels")))
-    event.add("description", "WARP reservation")
-    # organizer = vCalAddress('MAILTO:noone@example.com')
-    # organizer.params['cn'] = vText("WARP")
-    # organizer.params['role'] = vText('CHAIR')
-    # event['organizer'] = organizer
-    event['location'] = vText('Odense, Denmark')
-    event['uid'] = '20050115T101010/27346262376@mxm.dk'
-    # event.add('priority', 5)
-    cal.add_component(event)
-    print(decode_calendar(cal))
-
-
 @bp.route("/calendar/feed/<uid>-<key>/feed.ics")
 def feed(uid, key):
     """Get calendar feed."""
@@ -97,13 +72,14 @@ def feed(uid, key):
     calendar_time = datetime.fromtimestamp(
         timeRange["fromTS"], tz=timezone
     )
+    # Hacky solution to go to belgium timezone...
     for res in results:
         event = Event()
         event.add('summary', f"WARP {res['zone_name']} - SEAT {res['name']}")
         event.add(
-            'dtstart', datetime.fromtimestamp(res['fromts'], tz=timezone)
+            'dtstart', datetime.fromtimestamp(res['fromts'] - 3600*2, tz=timezone)
         )
-        event.add('dtend', datetime.fromtimestamp(res['tots'], tz=timezone))
+        event.add('dtend', datetime.fromtimestamp(res['tots'] - 3600*2, tz=timezone))
         event.add('dtstamp', calendar_time)
         event.add("description", "WARP reservation")
         event['uid'] = f"{res['id']}bookingwarp"
