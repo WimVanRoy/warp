@@ -96,9 +96,9 @@ class DevelopmentSettings(DefaultSettings):
     DATABASE_INIT_SCRIPT = [
         "sql/clean_db.sql",
         "sql/schema.sql",
-        "sql/sample_data.sql"
-        "sql/update.sql"
-        "sql/update2.sql"
+        "sql/sample_data.sql",
+        "sql/update.sql",
+        "sql/add_calendar.sql"
     ]
 
     SECRET_KEY = b'change_me'
