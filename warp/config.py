@@ -16,10 +16,6 @@ class DefaultSettings(object):
     # Number of days when everyone can book assigned desks
     DAYS_FREE_ASSIGN = 7
 
-    # Weekdays to hide for reservation, 0 for monday to 6 for sunday
-    # Set to [5,6] to omit weekends
-    OMITTED_WEEKDAYS = []
-        
     # opening and closing time in seconds from 00:00
     BOOK_OPEN = 6 * 3600
     BOOK_CLOSE = 20 * 3600
@@ -56,8 +52,12 @@ class DefaultSettings(object):
     AAD_HTTPS_SCHEME = "https"
     AAD_USER_NAME_ATTRIBUTE = "name"
     AAD_LOGIN_ATTRIBUTE = "preferred_username"
+    AUTH_AAD = False
     AAD_GROUP_MAP = [ [None,None] ]
     AAD_GROUP_STRICT_MAPPING = False
+    AAD_TENANT= os.environ.get('WARP_AAD_TENANT')
+    AAD_CLIENT_ID= os.environ.get('WARP_AAD_CLIENT_ID')
+    AAD_CLIENT_SECRET= os.environ.get('WARP_CLIENT_SECRET')
 
     ### LDAP variables to be configured
     # AUTH_LDAP = True

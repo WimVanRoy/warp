@@ -126,7 +126,7 @@ def aadApplyUserMetadata(userData):
 		strictMapping = flask.current_app.config.get('AAD_GROUP_STRICT_MAPPING')
 		if strictMapping:
 			Groups.delete() \
-				.where( Groups.login == login ) \
+				.where( Groups.login == userData['login'] ) \
 				.where( Groups.group.not_in(existingGroups) ) \
 				.execute()
 
